@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/diku-dk/pickle.svg?branch=master)](https://travis-ci.org/diku-dk/pickle)
+# Serialisation of Futhark values [![Build Status](https://travis-ci.org/diku-dk/pickle.svg?branch=master)](https://travis-ci.org/diku-dk/pickle)
 
 Serialisation and deserialisation for Futhark.
 

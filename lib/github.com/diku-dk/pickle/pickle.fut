@@ -6,9 +6,12 @@ module type pickle = {
   val pickle 'a : pu a -> a -> bytes
   val unpickle 'a : pu a -> bytes -> a
 
+  val i8 : pu i8
+  val i16 : pu i16
   val i32 : pu i32
   val pair 'a 'b : pu a -> pu b -> pu (a,b)
   val array 'a : pu a -> pu ([]a)
+  val iso 'a 'b : (a->b) -> (b->a) -> pu a -> pu b
 }
 
 module pickle : pickle = {
@@ -21,6 +24,18 @@ module pickle : pickle = {
   let pickle 'a (pu: pu a) = pu.pickler
 
   let unpickle 'a (pu: pu a) = pu.unpickler >-> (.1)
+
+  let i8 = { pickler = \x: bytes -> [u8.i8 x]
+           , unpickler = \s -> (i8.u8 s[0],
+                                s[1:])
+           }
+
+  let i16 = { pickler = \x: bytes -> [u8.i16 (x>>8),
+                                      u8.i16 (x>>0)]
+            , unpickler = \s -> (i16.u8 s[0] << 8 |
+                                 i16.u8 s[1] << 0,
+                                 s[2:])
+            }
 
   let i32 = { pickler = \x: bytes -> [u8.i32 (x>>24),
                                       u8.i32 (x>>16),
@@ -52,6 +67,10 @@ module pickle : pickle = {
         let arr = map (pu.unpickler >-> (.1)) (unflatten n k arr_s)
         in (arr, s)
     }
-}
 
-let main = pickle.(pickle (array (array (pair i32 i32))))
+  let iso 'a 'b (f:a->b) (g:b->a) (pu:pu a) : pu b =
+    { pickler = pu.pickler <-< g
+    , unpickler = \s -> let (v,s) = pu.unpickler s
+                        in (f v,s)
+    }
+}

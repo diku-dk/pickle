@@ -9,6 +9,8 @@ module type pickle = {
   val i8 : pu i8
   val i16 : pu i16
   val i32 : pu i32
+  val i64 : pu i64
+
   val pair 'a 'b : pu a -> pu b -> pu (a,b)
   val array 'a : pu a -> pu ([]a)
   val iso 'a 'b : (a->b) -> (b->a) -> pu a -> pu b
@@ -46,6 +48,25 @@ module pickle : pickle = {
                                  i32.u8 s[2] << 8 |
                                  i32.u8 s[3] << 0,
                                  s[4:])
+            }
+
+  let i64 = { pickler = \x: bytes -> [u8.i64 (x>>52),
+                                      u8.i64 (x>>48),
+                                      u8.i64 (x>>40),
+                                      u8.i64 (x>>32),
+                                      u8.i64 (x>>24),
+                                      u8.i64 (x>>16),
+                                      u8.i64 (x>>8),
+                                      u8.i64 (x>>0)]
+            , unpickler = \s -> (i64.u8 s[0] << 52 |
+                                 i64.u8 s[1] << 48 |
+                                 i64.u8 s[2] << 40 |
+                                 i64.u8 s[3] << 32 |
+                                 i64.u8 s[4] << 24 |
+                                 i64.u8 s[5] << 16 |
+                                 i64.u8 s[6] << 8 |
+                                 i64.u8 s[7] << 0,
+                                 s[8:])
             }
 
   let pair 'a 'b (pu_a: pu a) (pu_b: pu b) =

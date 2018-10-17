@@ -11,6 +11,12 @@ module type pickle = {
   val i32 : pu i32
   val i64 : pu i64
 
+  val u8 : pu u8
+  val u16 : pu u16
+  val u32 : pu u32
+  val u64 : pu u64
+
+  val bool : pu bool
   val pair 'a 'b : pu a -> pu b -> pu (a,b)
   val array 'a : pu a -> pu ([]a)
   val iso 'a 'b : (a->b) -> (b->a) -> pu a -> pu b
@@ -50,7 +56,7 @@ module pickle : pickle = {
                                  s[4:])
             }
 
-  let i64 = { pickler = \x: bytes -> [u8.i64 (x>>52),
+  let i64 = { pickler = \x: bytes -> [u8.i64 (x>>56),
                                       u8.i64 (x>>48),
                                       u8.i64 (x>>40),
                                       u8.i64 (x>>32),
@@ -58,7 +64,7 @@ module pickle : pickle = {
                                       u8.i64 (x>>16),
                                       u8.i64 (x>>8),
                                       u8.i64 (x>>0)]
-            , unpickler = \s -> (i64.u8 s[0] << 52 |
+            , unpickler = \s -> (i64.u8 s[0] << 56 |
                                  i64.u8 s[1] << 48 |
                                  i64.u8 s[2] << 40 |
                                  i64.u8 s[3] << 32 |
@@ -68,6 +74,48 @@ module pickle : pickle = {
                                  i64.u8 s[7] << 0,
                                  s[8:])
             }
+
+  let u64 = { pickler = \x: bytes -> [u8.u64 (x>>56),
+                                      u8.u64 (x>>48),
+                                      u8.u64 (x>>40),
+                                      u8.u64 (x>>32),
+                                      u8.u64 (x>>24),
+                                      u8.u64 (x>>16),
+                                      u8.u64 (x>>8),
+                                      u8.u64 (x>>0)]
+            , unpickler = \s -> (u64.u8 s[0] << 56 |
+                                 u64.u8 s[1] << 48 |
+                                 u64.u8 s[2] << 40 |
+                                 u64.u8 s[3] << 32 |
+                                 u64.u8 s[4] << 24 |
+                                 u64.u8 s[5] << 16 |
+                                 u64.u8 s[6] << 8 |
+                                 u64.u8 s[7] << 0,
+                                 s[8:])
+            }
+
+  let u32 = { pickler = \x: bytes -> [u8.u32 (x>>24),
+                                      u8.u32 (x>>16),
+                                      u8.u32 (x>>8),
+                                      u8.u32 (x>>0)]
+            , unpickler = \s -> (u32.u8 s[0] << 24 |
+                                 u32.u8 s[1] << 16 |
+                                 u32.u8 s[2] << 8 |
+                                 u32.u8 s[3] << 0,
+                                 s[4:])
+            }
+
+  let u16 = { pickler = \x: bytes -> [u8.u16 (x>>8),
+                                      u8.u16 (x>>0)]
+            , unpickler = \s -> (u16.u8 s[0] << 8 |
+                                 u16.u8 s[1] << 0,
+                                 s[2:])
+            }
+
+  let u8 = { pickler = \x: bytes -> [x]
+           , unpickler = \s -> (s[0],
+                                s[1:])
+           }
 
   let pair 'a 'b (pu_a: pu a) (pu_b: pu b) =
     { pickler = \(a, b): bytes -> pu_a.pickler a ++ pu_b.pickler b
@@ -94,4 +142,7 @@ module pickle : pickle = {
     , unpickler = \s -> let (v,s) = pu.unpickler s
                         in (f v,s)
     }
+
+  let bool : pu bool =
+    iso (== 1i8) (\x -> if x then 1i8 else 0i8) i8
 }

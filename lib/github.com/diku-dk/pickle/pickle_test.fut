@@ -104,6 +104,24 @@ entry test_u64 (x:u64) : bool =
   in test P.u64 (\z -> x == z) y
 
 -- ==
+-- entry: test_f32
+-- input { 1f32 } output { true }
+-- input { -1f32 } output { true }
+-- input { f32.inf } output { true }
+
+entry test_f32 (x:f32) : bool =
+  test P.f32 (==x) x
+
+-- ==
+-- entry: test_f64
+-- input { 1f64 } output { true }
+-- input { -1f64 } output { true }
+-- input { f64.inf } output { true }
+
+entry test_f64 (x:f64) : bool =
+  test P.f64 (==x) x
+
+-- ==
 -- entry: test_bool
 -- input { true } output { true }
 -- input { false } output { true }

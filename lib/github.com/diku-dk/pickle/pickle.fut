@@ -29,6 +29,9 @@ module type pickle = {
   val u32 : pu u32
   val u64 : pu u64
 
+  val f32 : pu f32
+  val f64 : pu f64
+
   val bool : pu bool
   val pair 'a 'b : pu a -> pu b -> pu (a,b)
   val array 'a : pu a -> pu ([]a)
@@ -51,6 +54,12 @@ module pickle : pickle = {
   let pickle 'a (pu: pu a) = pu.pickler
 
   let unpickle 'a (pu: pu a) = pu.unpickler >-> (.1)
+
+  let iso 'a 'b (f:a->b) (g:b->a) (pu:pu a) : pu b =
+    { pickler = pu.pickler <-< g
+    , unpickler = \s -> let (v,s) = pu.unpickler s
+                        in (f v,s)
+    }
 
   let i8 = { pickler = \x: bytes -> [u8.i8 x]
            , unpickler = \s -> (i8.u8 s[0],
@@ -132,9 +141,13 @@ module pickle : pickle = {
             }
 
   let u8 = { pickler = \x: bytes -> [x]
-           , unpickler = \s -> (s[0],
-                                s[1:])
+           , unpickler = \(s: bytes) -> (s[0],
+                                         s[1:])
            }
+
+  let f32 = iso f32.from_bits f32.to_bits u32
+
+  let f64 = iso f64.from_bits f64.to_bits u64
 
   let pair 'a 'b (pu_a: pu a) (pu_b: pu b) =
     { pickler = \(a, b): bytes -> pu_a.pickler a ++ pu_b.pickler b
@@ -154,12 +167,6 @@ module pickle : pickle = {
         let (arr_s, s) = split (n*k) s
         let arr = map (pu.unpickler >-> (.1)) (unflatten n k arr_s)
         in (arr, s)
-    }
-
-  let iso 'a 'b (f:a->b) (g:b->a) (pu:pu a) : pu b =
-    { pickler = pu.pickler <-< g
-    , unpickler = \s -> let (v,s) = pu.unpickler s
-                        in (f v,s)
     }
 
   module math = import "/futlib/math"

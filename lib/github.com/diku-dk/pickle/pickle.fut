@@ -143,6 +143,7 @@ module pickle : pickle = {
                         in (f v,s)
     }
 
-  let bool : pu bool =
-    iso (== 1i8) (\x -> if x then 1i8 else 0i8) i8
+  module math = import "/futlib/math"
+
+  let bool : pu bool = iso math.bool.i8 math.i8.bool i8
 }

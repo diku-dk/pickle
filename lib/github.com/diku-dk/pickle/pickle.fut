@@ -1,9 +1,22 @@
+-- Serialisation and deserialisation of Futhark values to byte
+-- sequences ("pickling").
+
+-- | This module contains picklers for primitive Futhark values, as
+-- well as combinators for creating array- and tuple-picklers.  It can
+-- be used directly, or as a building block for application-specific
+-- picklers.  Trying to unpickle an invalid byte sequence may crash
+-- the program.
 module type pickle = {
+  -- | A pickler that describes both how to pickle and unpickle a
+  -- value of type `a`.
   type^ pu 'a
 
+  -- | A sequence of bytes.
   type bytes = []u8
 
+  -- | Convert a value to a byte sequence.
   val pickle 'a : pu a -> a -> bytes
+  -- | Recover a value from a byte sequence.
   val unpickle 'a : pu a -> bytes -> a
 
   val i8 : pu i8
@@ -19,6 +32,12 @@ module type pickle = {
   val bool : pu bool
   val pair 'a 'b : pu a -> pu b -> pu (a,b)
   val array 'a : pu a -> pu ([]a)
+
+  -- | Given an isomorphism between types `a` and `b`, as well as a
+  -- pickler for `a`, produce a pickler for `b`.  This is particularly
+  -- handy for pickling records, as you can simply describe how they
+  -- can be converted into nested pairs and back again, and then use
+  -- the `pair`@term combinator.
   val iso 'a 'b : (a->b) -> (b->a) -> pu a -> pu b
 }
 

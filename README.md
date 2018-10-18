@@ -1,5 +1,12 @@
 # Futhark serialisation library [![Build Status](https://travis-ci.org/diku-dk/pickle.svg?branch=master)](https://travis-ci.org/diku-dk/pickle) [![Documentation](https://futhark-lang.org/pkgs/github.com/diku-dk/pickle/status.svg)](https://futhark-lang.org/pkgs/github.com/diku-dk/pickle/latest/)
 
+This library provides generic serialisation capabilities to Futhark
+programmers [1,2]. The library is built around the notion of picklers,
+which are values that can be constructed from a number of
+combinators. Picklers are typed with an index type and given a
+pickler, it is possible to serialise and deserialise (to and from byte
+streams) values of the index type.
+
 ## Installation
 
 ```
@@ -19,3 +26,13 @@ $ futharki
 [(1i32, 2i32), (3i32, 4i32)]
 [3]>
 ```
+
+## Literature
+
+[1] Martin Elsman. Type-Specialized Serialization with Sharing. In
+*Sixth Symposium on Trends in Functional Programming (TFP’05)*. Tallinn,
+Estonia. September 2005.
+
+[2] Andrew Kennedy. Pickler Combinators (Functional Pearl). In
+*Journal of Functional Programming. Volume 14, Issue 6,
+pp. 727-739*. November 2004.

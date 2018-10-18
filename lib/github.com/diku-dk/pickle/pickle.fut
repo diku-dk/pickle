@@ -1,3 +1,11 @@
+-- | Type-indexed serialisation library for Futhark values.
+
+-- | Module type describing the serialisation library. The library is
+-- built around the notion of picklers, which are values that can be
+-- constructed from a number of combinators. Picklers are typed with
+-- an index type and given a pickler, it is possible to serialise and
+-- deserialise values of the index type.
+
 module type pickle = {
   type^ pu 'a
 

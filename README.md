@@ -10,14 +10,14 @@ streams) values of the index type.
 ## Installation
 
 ```
-$ futhark-pkg add github.com/diku-dk/pickle
-$ futhark-pkg sync
+$ futhark pkg add github.com/diku-dk/pickle
+$ futhark pkg sync
 ```
 
 ## Usage example
 
 ```
-$ futharki
+$ futhark repl
 [0]> import "lib/github.com/diku-dk/pickle/pickle"
 [1]> pickle.(pickle (array (pair i32 i32)) [(1,2),(3,4)])
 [0u8, 0u8, 0u8, 2u8, 0u8, 0u8, 0u8, 8u8, 0u8, 0u8, 0u8, 1u8, 0u8, 0u8, 0u8, 2u8,

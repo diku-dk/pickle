@@ -47,14 +47,14 @@ module type pickle = {
 module pickle : pickle = {
   type bytes [n] = [n]u8
 
-  type pu 'a = { pickler : a -> bytes []
-               , unpickler : (n: i32) -> bytes [n] -> (a, bytes [])
-               }
+  type^ pu 'a = { pickler : a -> bytes []
+                , unpickler : (n: i32) -> bytes [n] -> (a, bytes [])
+                }
 
   let pickle 'a (pu: pu a) = pu.pickler
 
   let unpickle 'a [n] (pu: pu a) (s: bytes [n]) =
-    pu.unpickler n s |> (.1)
+    pu.unpickler n s |> (.0)
 
   let iso 'a 'b (f:a->b) (g:b->a) (pu:pu a) : pu b =
     { pickler = pu.pickler <-< g
@@ -136,7 +136,7 @@ module pickle : pickle = {
         let (n, s) = i32.unpickler n s
         let (k, s) = i32.unpickler (length s) s
         let (arr_s, s) = split (n*k) s
-        let arr = map (pu.unpickler k >-> (.1)) (unflatten n k arr_s)
+        let arr = map (pu.unpickler k >-> (.0)) (unflatten n k arr_s)
         in (arr, s)
     }
 }

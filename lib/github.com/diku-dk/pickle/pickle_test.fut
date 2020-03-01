@@ -1,7 +1,6 @@
 -- | ignore
 
 import "pickle"
-import "/futlib/math"
 
 module P = pickle
 
@@ -136,7 +135,7 @@ entry test_bool (x:bool) : bool =
 -- input { 0 } output { true }
 
 entry many (_:i32) : bool =
-  let pu = P.array (P.array (P.pair P.i32 (P.pair P.i8 P.i16)))
+  let pu = P.array 2 (P.array 2 (P.pair P.i32 (P.pair P.i8 P.i16)))
   let pu2 = P.iso (\(a,b) -> {a,b}) (\{a,b} -> (a,b)) (P.pair P.i32 P.i8)
   let v = [[(3,(1,2)),(6,(3,7))],
            [(4,(1,1)),(6,(4,2))]]

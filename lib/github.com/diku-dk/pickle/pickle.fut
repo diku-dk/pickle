@@ -64,6 +64,18 @@ module pickle : pickle = {
                                        in (f v,s)
     }
 
+  module math = {
+    module bool = bool
+    module i8 = i8
+    module i16 = i16
+    module i32 = i32
+    module i64 = i64
+    module u8 = u8
+    module u16 = u16
+    module u32 = u32
+    module u64 = u64
+  }
+
   let i8 : pu i8 =
     { pickler = \x -> [u8.i8 x]
     , unpickler = \n (s: bytes [n]) -> (i8.u8 s[0],
@@ -109,8 +121,6 @@ module pickle : pickle = {
                                         i64.u8 s[7] << 0,
                                         s[8:])
     }
-
-  module math = import "/futlib/math"
 
   let u64 = iso math.u64.i64 math.i64.u64 i64
   let u32 = iso math.u32.i32 math.i32.u32 i32

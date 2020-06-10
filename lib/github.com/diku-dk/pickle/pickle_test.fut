@@ -144,5 +144,5 @@ entry many (_:i32) : bool =
      && test P.i64 (0xFFFFFFFFFFFFFFF ==) 0xFFFFFFFFFFFFFFF
      && test P.i32 (\v -> i64.i32 v == 0x7FFFFFFF) 0x7FFFFFFF
      && test P.i16 (\v -> i64.i16 v == 0x7FFF) 0x7FFF
-     && test P.i16 (\v -> i64.i16 v != 0x8000) 0x8000
+     && test P.u16 (\v -> i64.u16 v == 0x8000) 0x8000
      && test P.i8 (100 ==) 100

@@ -1,4 +1,4 @@
-# Futhark serialisation library [![Build Status](https://travis-ci.org/diku-dk/pickle.svg?branch=master)](https://travis-ci.org/diku-dk/pickle) [![Documentation](https://futhark-lang.org/pkgs/github.com/diku-dk/pickle/status.svg)](https://futhark-lang.org/pkgs/github.com/diku-dk/pickle/latest/)
+# Futhark serialisation library [![CI](https://github.com/diku-dk/pickle/workflows/CI/badge.svg)](https://github.com/diku-dk/pickle/actions) [![Documentation](https://futhark-lang.org/pkgs/github.com/diku-dk/pickle/status.svg)](https://futhark-lang.org/pkgs/github.com/diku-dk/pickle/latest/)
 
 This library provides generic serialisation capabilities to Futhark
 programmers [1,2]. The library is built around the notion of picklers,

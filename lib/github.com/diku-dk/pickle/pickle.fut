@@ -34,7 +34,7 @@ module type pickle = {
 
   val bool : pu bool
   val pair 'a 'b : pu a -> pu b -> pu (a,b)
-  val array 'a : (k: i32) -> pu a -> pu ([k]a)
+  val array 'a : (k: i64) -> pu a -> pu ([k]a)
 
   -- | Given an isomorphism between types `a` and `b`, as well as a
   -- pickler for `a`, produce a pickler for `b`.  This is particularly
@@ -48,7 +48,7 @@ module pickle : pickle = {
   type bytes [n] = [n]u8
 
   type^ pu 'a = { pickler : a -> bytes []
-                , unpickler : (n: i32) -> bytes [n] -> (a, bytes [])
+                , unpickler : (n: i64) -> bytes [n] -> (a, bytes [])
                 }
 
   let pickle 'a (pu: pu a) = pu.pickler
@@ -146,9 +146,9 @@ module pickle : pickle = {
                   else let m = length (pu.pickler arr[0])
                        let pickle_elem x = pu.pickler x :> bytes [m]
                        let s = flatten (map pickle_elem arr)
-                       in i32.pickler (length s / length arr) ++ s
+                       in i64.pickler (length s / length arr) ++ s
     , unpickler = \n (s: bytes [n]) ->
-                    let (m, s) = unpickle' i32 s
+                    let (m, s) = unpickle' i64 s
                     let (arr_s, s) = split (k*m) s
                     let arr = map (\x -> x |> pu.unpickler m |> (.0)) (unflatten k m arr_s)
                     in (arr, s)
